@@ -1,0 +1,510 @@
+/* Additional dark mode styles */
+
+/* General Background and Text */
+.dark,
+.dark body,
+.dark #root,
+.dark [data-theme="dark"] {
+  background-color: #0f172a !important; /* Darker blue-black background */
+  color: #e2e8f0 !important; /* Light gray text */
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}
+
+/* Force dark mode on all containers */
+.dark > div,
+.dark main,
+.dark section,
+.dark article,
+.dark aside,
+.dark main > div,
+.dark div > div,
+.dark [class*="Page"],
+.dark [class*="page"],
+.dark [class*="container"],
+.dark [class*="wrapper"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Direct targeting of key routes */
+.dark [class*="home"],
+.dark [class*="Home"],
+.dark div[class*="home"],
+.dark div[class*="Home"],
+.dark div[data-route="/"],
+.dark div[data-page="home"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.dark [class*="profile"],
+.dark [class*="Profile"],
+.dark div[data-route="/profile"],
+.dark div[data-page="profile"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.dark [class*="jobs"],
+.dark [class*="Jobs"],
+.dark div[data-route="/jobs"],
+.dark div[data-page="jobs"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.dark [class*="browse"],
+.dark [class*="Browse"],
+.dark div[data-route="/browse"],
+.dark div[data-page="browse"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Navbar styles */
+.dark .navbar-brand {
+  color: #ffffff !important; /* White text for navbar */
+}
+
+.dark nav, 
+.dark header {
+  background-color: #0f172a !important; /* Dark navbar background */
+  border-bottom: 1px solid #334155 !important; /* Subtle border */
+}
+
+/* Card styles */
+.dark .card,
+.dark [class*="card"],
+.dark [class*="box"],
+.dark [class*="container"],
+.dark [class*="wrapper"],
+.dark [class*="content"],
+.dark [class*="section"] {
+  background-color: #1e293b !important; /* Dark card background */
+  color: #e2e8f0 !important; /* Light text for cards */
+  border: 1px solid #334155 !important; /* Lighter border */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important; /* Enhanced shadow */
+}
+
+/* Ensure all text in dark mode is visible */
+.dark p, 
+.dark span, 
+.dark div, 
+.dark label,
+.dark li {
+  color: #e2e8f0 !important;
+}
+
+/* Headings with better contrast */
+.dark h1, 
+.dark h2, 
+.dark h3, 
+.dark h4, 
+.dark h5, 
+.dark h6 {
+  color: #f8fafc !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Text with gray color classes */
+.dark [class*="text-gray-"],
+.dark [class*="text-slate-"] {
+  color: #cbd5e1 !important;
+}
+
+/* Ensure text in job cards is visible */
+.dark [class*="job-"] h2,
+.dark [class*="job-"] h3,
+.dark [class*="job-"] p,
+.dark [class*="job-"] span,
+.dark [class*="job-"] div {
+  color: #f1f5f9 !important;
+}
+
+/* Target specific hero/banner areas */
+.dark [class*="hero"],
+.dark [class*="banner"],
+.dark [class*="jumbotron"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Force white areas to dark mode */
+.dark [style*="background-color: white"],
+.dark [style*="background-color: #fff"],
+.dark [style*="background-color:#fff"],
+.dark [style*="background-color: rgb(255, 255, 255)"],
+.dark [style*="background-color:rgb(255,255,255)"],
+.dark [style*="background: white"],
+.dark [style*="background: #fff"],
+.dark [style*="background:#fff"],
+.dark [style*="background: rgb(255, 255, 255)"],
+.dark [style*="background:rgb(255,255,255)"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Profile page specific styles */
+.dark [class*="profile"] {
+  background-color: #0f172a !important;
+}
+
+.dark [class*="profile"] > div,
+.dark [class*="profile"] [class*="container"],
+.dark [class*="profile"] [class*="section"],
+.dark [class*="profile"] [class*="card"] {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+}
+
+/* Profile specific background elements */
+.dark [class*="profile"] [class*="bg-gray-"],
+.dark [class*="profile"] [class*="bg-slate-"],
+.dark [class*="profile"] .bg-gray-50 {
+  background-color: #0f172a !important;
+  border: 1px solid #334155 !important;
+}
+
+/* Form elements & modal styles */
+.dark form,
+.dark dialog,
+.dark [role="dialog"],
+.dark [class*="modal"],
+.dark [class*="drawer"],
+.dark [class*="popup"],
+.dark [class*="Dialog"] {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+}
+
+/* Dialog header and footer */
+.dark [class*="DialogHeader"],
+.dark [class*="DialogFooter"],
+.dark [class*="dialog-header"],
+.dark [class*="dialog-footer"] {
+  border-color: #334155 !important;
+}
+
+/* Dialog backdrop */
+.dark [class*="backdrop"],
+.dark [class*="overlay"] {
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+/* Button styles */
+.dark .button-primary,
+.dark button:not([class*="ghost"]):not([class*="outline"]) {
+  background-color: #3b82f6 !important; /* Vibrant blue */
+  color: #ffffff !important; /* White text */
+  border: none !important;
+  transition: transform 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.dark .button-primary:hover,
+.dark button:not([class*="ghost"]):not([class*="outline"]):hover {
+  background-color: #2563eb !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark button[class*="outline"],
+.dark button[class*="ghost"] {
+  border: 1px solid #4b5563 !important;
+  color: #e2e8f0 !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+.dark button[class*="outline"]:hover,
+.dark button[class*="ghost"]:hover {
+  background-color: rgba(75, 85, 99, 0.2) !important;
+  border-color: #60a5fa !important;
+}
+
+/* Input styles */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: #1e293b !important; /* Dark input background */
+  color: #ffffff !important; /* White text */
+  border: 1px solid #4b5563 !important; /* Border color */
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #60a5fa !important;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25) !important;
+  outline: none !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Profile section styles */
+.dark .profile-section,
+.dark [class*="profile"] {
+  background-color: #1e293b !important; /* Dark background for profile */
+  color: #e2e8f0 !important; /* Light text */
+  border: 1px solid #334155 !important; /* Border color */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3) !important; /* Shadow */
+}
+
+/* Job cards */
+.dark [class*="job-"],
+.dark [class*="position"],
+.dark div[class*="bg-white"],
+.dark .bg-white {
+  background-color: #1e293b !important; /* Dark job card background */
+  border-color: #334155 !important; /* Border color */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important; /* Enhanced shadow */
+  color: #e2e8f0 !important;
+}
+
+/* Skills pills */
+.dark [class*="skill"],
+.dark [class*="tag"],
+.dark [class*="badge"],
+.dark .bg-gray-100,
+.dark .bg-purple-50 {
+  background-color: #2d3748 !important; /* Darker background */
+  color: #a5b4fc !important; /* Light purple text */
+  border: 1px solid #4b5563 !important; /* Border */
+}
+
+/* Badge variants */
+.dark [class*="badge"][class*="secondary"],
+.dark [class*="badge"][class*="outline"] {
+  background-color: #1e293b !important;
+  border: 1px solid #4b5563 !important;
+  color: #a5b4fc !important;
+}
+
+/* Purple badges */
+.dark [class*="badge"][class*="purple"],
+.dark .text-purple-600 {
+  color: #c4b5fd !important;
+}
+
+/* Green badges */
+.dark .text-green-600 {
+  color: #86efac !important;
+}
+
+/* Yellow badges */
+.dark .text-yellow-600 {
+  color: #fde68a !important;
+}
+
+/* Red badges */
+.dark .text-red-600 {
+  color: #fca5a5 !important;
+}
+
+/* Table styles */
+.dark table {
+  background-color: #1e293b !important; /* Dark table background */
+  color: #e2e8f0 !important; /* Light text */
+  border-collapse: collapse !important;
+}
+
+.dark th,
+.dark td {
+  border-color: #334155 !important; /* Table border color */
+  padding: 0.75rem !important;
+}
+
+.dark th {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+  font-weight: 600 !important;
+}
+
+.dark tr:nth-child(even) {
+  background-color: #1e293b !important;
+}
+
+.dark tr:nth-child(odd) {
+  background-color: #0f172a !important;
+}
+
+.dark tr:hover {
+  background-color: #334155 !important;
+}
+
+/* Links */
+.dark a {
+  color: #60a5fa !important; /* Bright blue for links */
+  transition: color 0.2s ease, text-decoration 0.2s ease !important;
+}
+
+.dark a:hover {
+  color: #93c5fd !important; /* Lighter blue on hover */
+  text-decoration: underline !important;
+}
+
+.dark a:focus {
+  outline: 2px solid #60a5fa !important;
+  outline-offset: 2px !important;
+}
+
+/* Resume link styling */
+.dark [class*="resume"] a,
+.dark [class*="file"] a {
+  color: #60a5fa !important; /* Blue for file links */
+  text-decoration: underline !important;
+}
+
+/* Header text */
+.dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6 {
+  color: #f8fafc !important; /* Brighter white for headers */
+}
+
+/* UI adjustments for specific elements seen in screenshots */
+.dark .filters,
+.dark [class*="sidebar"] {
+  background-color: #1e293b !important;
+  border-right: 1px solid #334155 !important;
+}
+
+.dark [class*="position-"],
+.dark [class*="jobs-"] {
+  background-color: #1e293b !important;
+}
+
+/* Toggle button */
+.dark [aria-label="Toggle dark mode"] {
+  color: #f8fafc !important;
+}
+
+/* Avatar/profile image container */
+.dark [class*="avatar"] {
+  border: 2px solid #4b5563 !important;
+}
+
+/* Details buttons */
+.dark [class*="details"] {
+  background-color: #2563eb !important;
+  color: white !important;
+}
+
+/* Logo styles */
+.dark .logo {
+  filter: brightness(1.2) !important;
+}
+
+/* Footer styles */
+.dark footer {
+  background-color: #0f172a !important; /* Dark footer background */
+  color: #e2e8f0 !important; /* Light text */
+  border-top-color: #334155 !important; /* Border color */
+}
+
+/* Search input styles */
+.dark [type="search"],
+.dark [class*="search"] input {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+}
+
+/* Additional specificity for home page hero section */
+.dark [class*="hero"],
+.dark [class*="banner"],
+.dark [class*="main"],
+.dark [style*="background-image"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+  background-blend-mode: overlay !important;
+}
+
+/* Override inline styles with !important */
+.dark * {
+  background-color: unset;
+  color: unset;
+}
+
+.dark *[style*="background"] {
+  background-color: #0f172a !important;
+}
+
+.dark *[style*="color"] {
+  color: #e2e8f0 !important;
+}
+
+/* Additional home page overrides */
+.dark #root > div > main,
+.dark #root > div > div,
+.dark [class*="home-container"],
+.dark [class*="home-banner"],
+.dark [class*="home-content"],
+.dark [class*="home-section"],
+.dark [class*="home-wrapper"],
+.dark [class*="job-section"] {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+/* Ensure images/illustrations stay visible */
+.dark img,
+.dark svg,
+.dark [class*="illustration"],
+.dark [class*="image"] {
+  opacity: 0.9 !important;
+  filter: brightness(0.9) contrast(1.1) !important;
+}
+
+/* Make sure home page text is visible */
+.dark [class*="home"] h1,
+.dark [class*="home"] h2,
+.dark [class*="home"] h3,
+.dark [class*="home"] p,
+.dark [class*="home"] span,
+.dark [class*="home"] div {
+  color: #e2e8f0 !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Additional job page overrides */
+.dark [class*="job-listing"],
+.dark [class*="job-item"],
+.dark [class*="job-card"],
+.dark [class*="job-post"],
+.dark [class*="job-container"] {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border: 1px solid #334155 !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.dark [class*="job-listing"]:hover,
+.dark [class*="job-item"]:hover,
+.dark [class*="job-card"]:hover,
+.dark [class*="job-post"]:hover,
+.dark [class*="job-container"]:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset !important;
+  border-color: #4b5563 !important;
+}
+
+/* Additional profile page overrides */
+.dark [class*="profile-container"],
+.dark [class*="profile-section"],
+.dark [class*="profile-content"],
+.dark [class*="profile-info"] {
+  background-color: #1e293b !important;
+  color: #e2e8f0 !important;
+  border-color: #334155 !important;
+}
+
+/* Emergency override to ensure white text on dark backgrounds */
+.dark * {
+  color: #e2e8f0 !important;
+}
