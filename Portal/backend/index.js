@@ -20,7 +20,10 @@ dotenv.config({});
 // Validate required environment variables
 const requiredEnvVars = [
     'MONGO_URI',
-    'SECRET_KEY'
+    'SECRET_KEY',
+    // 'PORT',
+    // 'CLOUDINARY_CLOUD_NAME',
+    // 'CLOUDINARY_API_KEY',
 ];
 
 const missingEnvVars = requiredEnvVars.filter(envVar => !process.env[envVar]);
@@ -31,7 +34,7 @@ if (missingEnvVars.length > 0) {
 
 // Configure CORS based on environment
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
+    origin: process.env.NODE_ENV === 'production'
         ? true // Allow requests from any origin in production
         : "http://localhost:5173", // Only allow localhost in development
     credentials: true
@@ -45,7 +48,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // Create uploads and resumes directories if they don't exist
-const uploadsDir = path.join(__dirname, '..', 'uploads');
+const uploadsDir = path.join(__dirname, 'uploads');
 const resumesDir = path.join(uploadsDir, 'resumes');
 
 if (!fs.existsSync(uploadsDir)) {
@@ -57,8 +60,8 @@ if (!fs.existsSync(resumesDir)) {
 }
 
 // Serve uploaded files - this should come before route handlers
-// The path is relative to the project root, not the 'backend' directory
-app.use('/api/v1/uploads', express.static(path.join(__dirname, '..', 'uploads')));
+// Serve from the backend/uploads directory where files are actually stored
+app.use('/api/v1/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // api's
 app.use("/api/v1/user", userRoutes);
@@ -66,7 +69,7 @@ app.use("/api/v1/company", companyRoute);
 app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
-// Serve frontend static files 
+// // Serve frontend static files 
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 // For all other routes, serve the index.html file
@@ -76,7 +79,7 @@ app.get('*', (req, res) => {
 
 const PORT = process.env.PORT || 8001;
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     connectDB();
     console.log(`Server running at port ${PORT}`);
 });

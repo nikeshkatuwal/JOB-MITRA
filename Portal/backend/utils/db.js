@@ -18,7 +18,7 @@ export async function connectDB(retries = 5) {
       socketTimeoutMS: 45000,
     });
 
-    console.log('MongoDB (mongoose) connected successfully');
+    console.log('MongoDB (mongoose) connected successfully in Nikesh database');
   } catch (error) {
     if (retries > 0) {
       console.log(`Retrying connection... (${retries} attempts remaining)`);

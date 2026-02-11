@@ -7,18 +7,20 @@ import { parseResume, validateResumeFile } from "../utils/resumeParser.js";
 import fs from 'fs';
 import path from 'path';
 import { deleteFile } from "../middlewares/fileUpload.js";
+import crypto from 'crypto';
+import sendEmail from "../utils/sendEmail.js";
 
 export const register = async (req, res) => {
     try {
         const { fullname, email, phoneNumber, password, role } = req.body;
-         
+
         if (!fullname || !email || !phoneNumber || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing",
                 success: false
             });
         };
-        
+
         const file = req.file;
         const fileUri = getDataUri(file);
         const cloudResponse = await uploadToCloudinary(fileUri.content);
@@ -38,8 +40,11 @@ export const register = async (req, res) => {
             phoneNumber,
             password: hashedPassword,
             role,
-            profile:{
-                profilePhoto:cloudResponse.secure_url,
+            profile: {
+                profilePhoto: {
+                    url: cloudResponse.url,
+                    publicId: cloudResponse.publicId
+                }
             }
         });
 
@@ -55,7 +60,7 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
-        
+
         if (!email || !password || !role) {
             return res.status(400).json({
                 message: "Something is missing",
@@ -168,6 +173,43 @@ export const updateProfile = async (req, res) => {
             console.log('Updated user-provided skills:', user.profile.skills);
         }
 
+        // Handle profile photo upload if file exists
+        if (req.profilePhotoData) {
+            try {
+                console.log('Processing profile photo upload...');
+
+                // Delete old profile photo from Cloudinary if exists
+                if (user.profile.profilePhoto?.publicId) {
+                    await deleteFromCloudinary(user.profile.profilePhoto.publicId, { resource_type: 'image' });
+                }
+
+                // Upload new profile photo to Cloudinary
+                const cloudResponse = await uploadToCloudinary(req.profilePhotoData.buffer, {
+                    resource_type: 'image',
+                    folder: 'profiles'
+                });
+
+                user.profile.profilePhoto = {
+                    url: cloudResponse.url,
+                    publicId: cloudResponse.publicId
+                };
+
+                console.log('Profile photo updated successfully');
+
+                // Clean up local temp file
+                deleteFile(req.profilePhotoData.path);
+            } catch (error) {
+                console.error('Profile photo upload error:', error);
+                if (req.profilePhotoData.path) {
+                    deleteFile(req.profilePhotoData.path);
+                }
+                return res.status(400).json({
+                    message: "Failed to upload profile photo",
+                    success: false
+                });
+            }
+        }
+
         // Handle resume upload if file exists
         if (fileData) {
             try {
@@ -252,7 +294,7 @@ export const updateProfile = async (req, res) => {
             user: userData,
             success: true
         });
-        
+
     } catch (error) {
         console.error("Profile update error:", error);
         // Clean up uploaded file if there's an error
@@ -286,6 +328,174 @@ export const getProfile = async (req, res) => {
         console.error("Error fetching profile:", error);
         return res.status(500).json({
             message: "Internal server error",
+            success: false
+        });
+    }
+};
+
+// Forgot Password
+export const forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found with this email",
+                success: false
+            });
+        }
+
+        // Get Reset Password Token
+        const resetToken = user.getResetPasswordToken();
+
+        await user.save({ validateBeforeSave: false });
+
+        const resetPasswordUrl = `${process.env.FRONTEND_URL}/password/reset/${resetToken}`;
+
+        const message = `Your password reset token is :- \n\n ${resetPasswordUrl} \n\nIf you have not requested this email then, please ignore it.`;
+
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: `Job Portal Password Recovery`,
+                message,
+            });
+
+            res.status(200).json({
+                success: true,
+                message: `Email sent to: ${user.email}`,
+            });
+        } catch (error) {
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpire = undefined;
+
+            await user.save({ validateBeforeSave: false });
+
+            return res.status(500).json({
+                message: error.message,
+                success: false
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false
+        });
+    }
+};
+
+// Reset Password
+export const resetPassword = async (req, res) => {
+    try {
+        // Creating token hash
+        const resetPasswordToken = crypto
+            .createHash('sha256')
+            .update(req.params.token)
+            .digest('hex');
+
+        const user = await User.findOne({
+            resetPasswordToken,
+            resetPasswordExpire: { $gt: Date.now() },
+        });
+
+        if (!user) {
+            return res.status(400).json({
+                message: "Reset Password Token is invalid or has been expired",
+                success: false
+            });
+        }
+
+        if (req.body.password !== req.body.confirmPassword) {
+            return res.status(400).json({
+                message: "Password does not match",
+                success: false
+            });
+        }
+
+        // Set new password
+        user.password = req.body.password;
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpire = undefined;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Password updated successfully",
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Internal server error",
+            success: false
+        });
+    }
+};
+
+// Google Login
+export const googleLogin = async (req, res) => {
+    try {
+        const { name, email, photo, role } = req.body;
+
+        if (!name || !email || !role) {
+            return res.status(400).json({
+                message: "Name, email and role are required",
+                success: false
+            });
+        }
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Create user if not exists
+            user = await User.create({
+                fullname: name,
+                email,
+                password: crypto.randomBytes(16).toString('hex'), // Random password for Google users
+                role,
+                profile: {
+                    profilePhoto: {
+                        url: photo,
+                        publicId: ""
+                    }
+                }
+            });
+        } else {
+            // Check if role matches
+            if (user.role !== role) {
+                return res.status(400).json({
+                    message: "Account already exists with a different role",
+                    success: false
+                });
+            }
+        }
+
+        const tokenData = {
+            userId: user._id
+        }
+        const jwtToken = await jwt.sign(tokenData, process.env.SECRET_KEY, { expiresIn: '1d' });
+
+        const userData = {
+            _id: user._id,
+            fullname: user.fullname,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            role: user.role,
+            profile: user.profile
+        }
+
+        return res.status(200).cookie("token", jwtToken, { maxAge: 1 * 24 * 60 * 60 * 1000, httpsOnly: true, sameSite: 'strict' }).json({
+            message: `Welcome back ${user.fullname}`,
+            user: userData,
+            success: true
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: "Google login failed",
             success: false
         });
     }

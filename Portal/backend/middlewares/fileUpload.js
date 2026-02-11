@@ -21,19 +21,23 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
     try {
-        // Check if file exists
         if (!file) {
             cb(new Error('No file uploaded'), false);
             return;
         }
 
-        // Check mime type
-        if (file.mimetype !== 'application/pdf') {
-            cb(new Error('Only PDF files are allowed'), false);
-            return;
+        if (file.fieldname === 'profilePhoto') {
+            if (!file.mimetype.startsWith('image/')) {
+                cb(new Error('Only image files are allowed for profile photo'), false);
+                return;
+            }
+        } else if (file.fieldname === 'file') {
+            if (file.mimetype !== 'application/pdf') {
+                cb(new Error('Only PDF files are allowed for resume'), false);
+                return;
+            }
         }
 
-        // Accept the file
         cb(null, true);
     } catch (error) {
         cb(new Error('File validation failed: ' + error.message), false);
@@ -45,12 +49,15 @@ const upload = multer({
     fileFilter: fileFilter,
     limits: {
         fileSize: 5 * 1024 * 1024, // 5MB limit
-        files: 1 // Only allow 1 file
+        files: 2 // Allow up to 2 files (resume and profile photo)
     }
 });
 
 export const handleFileUpload = (req, res, next) => {
-    upload.single('file')(req, res, async (err) => {
+    upload.fields([
+        { name: 'file', maxCount: 1 },
+        { name: 'profilePhoto', maxCount: 1 }
+    ])(req, res, async (err) => {
         try {
             if (err instanceof multer.MulterError) {
                 if (err.code === 'LIMIT_FILE_SIZE') {
@@ -70,28 +77,28 @@ export const handleFileUpload = (req, res, next) => {
                 });
             }
 
-            // If no file is uploaded, just continue
-            if (!req.file) {
-                next();
-                return;
+            // Prepare files info for next middleware
+            if (req.files) {
+                if (req.files.file?.[0]) {
+                    const file = req.files.file[0];
+                    req.fileData = {
+                        originalname: file.originalname,
+                        filename: file.filename,
+                        path: file.path,
+                        mimetype: file.mimetype
+                    };
+                }
+                if (req.files.profilePhoto?.[0]) {
+                    const file = req.files.profilePhoto[0];
+                    req.profilePhotoData = {
+                        originalname: file.originalname,
+                        filename: file.filename,
+                        path: file.path,
+                        mimetype: file.mimetype,
+                        buffer: fs.readFileSync(file.path) // Read buffer for Cloudinary
+                    };
+                }
             }
-
-            // Log file details for debugging
-            console.log('File received:', {
-                originalname: req.file.originalname,
-                filename: req.file.filename,
-                path: req.file.path,
-                mimetype: req.file.mimetype,
-                size: req.file.size
-            });
-
-            // Prepare file data for the next middleware
-            req.fileData = {
-                originalname: req.file.originalname,
-                filename: req.file.filename,
-                path: req.file.path,
-                mimetype: req.file.mimetype
-            };
 
             next();
         } catch (error) {

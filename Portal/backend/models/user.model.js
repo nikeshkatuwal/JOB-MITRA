@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import crypto from 'crypto';
 
 const userSchema = new mongoose.Schema({
     fullname: {
@@ -37,11 +38,11 @@ const userSchema = new mongoose.Schema({
         default: 'user'
     },
     profile: {
-        bio: { 
+        bio: {
             type: String,
             maxLength: [500, 'Bio cannot exceed 500 characters']
         },
-        skills: [{ 
+        skills: [{
             type: String,
             trim: true
         }],
@@ -56,7 +57,7 @@ const userSchema = new mongoose.Schema({
             uploadedAt: Date
         },
         parsedResume: {
-            skills: [{ 
+            skills: [{
                 type: String,
                 trim: true
             }],
@@ -64,7 +65,7 @@ const userSchema = new mongoose.Schema({
             location: String,
             lastUpdated: Date
         },
-        company: { 
+        company: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Company'
         },
@@ -72,16 +73,18 @@ const userSchema = new mongoose.Schema({
             url: String,
             publicId: String
         }
-    }
+    },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date
 }, { timestamps: true });
 
 // Middleware to clean up old resume file before updating
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
     if (this.isModified('profile.resume.path')) {
         // The file cleanup is handled in the controller
         next();
     }
-    
+
     if (this.isModified('password')) {
         this.password = await bcrypt.hash(this.password, 10);
     }
@@ -89,15 +92,32 @@ userSchema.pre('save', async function(next) {
 });
 
 // Compare user password
-userSchema.methods.comparePassword = async function(enteredPassword) {
+userSchema.methods.comparePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
 // Return JWT token
-userSchema.methods.getJwtToken = function() {
+userSchema.methods.getJwtToken = function () {
     return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
         expiresIn: process.env.JWT_EXPIRE
     });
+};
+
+// Generating Password Reset Token
+userSchema.methods.getResetPasswordToken = function () {
+    // Generating Token
+    const resetToken = crypto.randomBytes(20).toString('hex');
+
+    // Hashing and adding resetPasswordToken to userSchema
+    this.resetPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+
+    // Setting Token Expire Time
+    this.resetPasswordExpire = Date.now() + 15 * 60 * 1000;
+
+    return resetToken;
 };
 
 export const User = mongoose.model('User', userSchema);
