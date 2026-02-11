@@ -16,7 +16,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 const JobDescription = () => {
     const { singleJob } = useSelector(store => store.job);
     const { user } = useSelector(store => store.auth);
-    const isInitiallyApplied = singleJob?.applications && singleJob?.applications?.some(application => 
+    const isInitiallyApplied = singleJob?.applications && singleJob?.applications?.some(application =>
         typeof application === 'object' ? application.applicant === user?._id : application === user?._id
     ) || false;
     const [isApplied, setIsApplied] = useState(isInitiallyApplied);
@@ -40,7 +40,7 @@ const JobDescription = () => {
     useEffect(() => {
         // Check for both possible field names (screeningQuestions or screening_questions)
         const questions = singleJob?.screeningQuestions || singleJob?.screening_questions;
-        
+
         if (questions && questions.length > 0) {
             setScreeningResponses(
                 questions.map(q => ({
@@ -68,8 +68,8 @@ const JobDescription = () => {
         }
 
         // Check for both possible field names for screening questions
-        const hasScreeningQuestions = (singleJob?.screeningQuestions && singleJob.screeningQuestions.length > 0) || 
-                                    (singleJob?.screening_questions && singleJob.screening_questions.length > 0);
+        const hasScreeningQuestions = (singleJob?.screeningQuestions && singleJob.screeningQuestions.length > 0) ||
+            (singleJob?.screening_questions && singleJob.screening_questions.length > 0);
 
         if (hasScreeningQuestions) {
             setScreeningDialogOpen(true);
@@ -88,23 +88,23 @@ const JobDescription = () => {
         setIsSubmittingApplication(true);
         try {
             const requestBody = {};
-            
+
             if (withResponses && screeningResponses.length > 0) {
                 requestBody.screeningResponses = screeningResponses;
             }
 
             const res = await axios.post(
-                `${APPLICATION_API_END_POINT}/apply/${jobId}`, 
-                requestBody, 
+                `${APPLICATION_API_END_POINT}/apply/${jobId}`,
+                requestBody,
                 { withCredentials: true }
             );
 
             if (res.data.success) {
                 setIsApplied(true);
                 const currentApplications = singleJob.applications || [];
-                const updatedSingleJob = { 
-                    ...singleJob, 
-                    applications: [...currentApplications, { applicant: user?._id }] 
+                const updatedSingleJob = {
+                    ...singleJob,
+                    applications: [...currentApplications, { applicant: user?._id }]
                 };
                 dispatch(setSingleJob(updatedSingleJob));
                 toast.success(res.data.message);
@@ -124,7 +124,7 @@ const JobDescription = () => {
 
     const recalculateMatchScores = async () => {
         if (!isRecruiter || !isJobCreator) return;
-        
+
         setIsRecalculating(true);
         try {
             const res = await axios.post(`${APPLICATION_API_END_POINT}/${jobId}/recalculate`, {}, { withCredentials: true });
@@ -142,7 +142,7 @@ const JobDescription = () => {
 
     const deleteJobHandler = async () => {
         if (!isRecruiter || !isJobCreator) return;
-        
+
         setIsDeleting(true);
         try {
             const res = await axios.delete(`${JOB_API_END_POINT}/delete/${jobId}`, { withCredentials: true });
@@ -168,26 +168,26 @@ const JobDescription = () => {
                 }
 
                 const res = await axios.get(`${JOB_API_END_POINT}/get/${jobId}`, { withCredentials: true });
-                
+
                 if (res.data.success) {
                     const job = res.data.job;
-                    
+
                     // Format requirements if they exist
                     if (job.requirements) {
-                        job.formattedRequirements = Array.isArray(job.requirements) 
+                        job.formattedRequirements = Array.isArray(job.requirements)
                             ? job.requirements.map(req => {
                                 if (typeof req === 'object' && req !== null) {
-                                    return req.skill || req.requirement || req.text || 
-                                           req.name || req.title || req.description || 
-                                           (req.toString && req.toString() !== '[object Object]' ? req.toString() : 'Requirement');
+                                    return req.skill || req.requirement || req.text ||
+                                        req.name || req.title || req.description ||
+                                        (req.toString && req.toString() !== '[object Object]' ? req.toString() : 'Requirement');
                                 }
                                 return req;
                             })
                             : [];
                     }
-                    
+
                     dispatch(setSingleJob(job));
-                    
+
                     // Check if the user has already applied for this job
                     // Handle both object applications and string/ID applications
                     console.log("DEBUG - Application Check:", {
@@ -196,44 +196,44 @@ const JobDescription = () => {
                         applications: job.applications || [],
                         applicationsCount: job.applications?.length || 0
                     });
-                    
+
                     // If user is not logged in, they haven't applied
                     if (!user?._id) {
                         setIsApplied(false);
                         return;
                     }
-                    
+
                     // Check if the user has already applied for this job
                     let isAlreadyApplied = false;
-                    
+
                     if (job.applications && job.applications.length > 0) {
                         // First check for object applications where we can directly check the applicant ID
                         isAlreadyApplied = job.applications.some(application => {
                             const isObjectApplication = typeof application === 'object' && application !== null;
-                            
+
                             if (isObjectApplication) {
                                 // Handle object applications - check applicant field
                                 const applicantId = application.applicant?._id || application.applicant;
                                 return applicantId === user?._id;
                             }
-                            
+
                             // For string applications, we'll check in the next step
                             return false;
                         });
-                        
+
                         // If not already found as applied, check if we need to make an API call to verify string applications
                         if (!isAlreadyApplied) {
                             // Check if there are any string applications that we need to verify
                             const stringApplications = job.applications.filter(app => typeof app === 'string');
-                            
+
                             if (stringApplications.length > 0) {
                                 try {
                                     // Make a single API call to check if the user has applied
                                     const checkRes = await axios.get(
-                                        `${APPLICATION_API_END_POINT}/check/${jobId}/${user._id}`, 
+                                        `${APPLICATION_API_END_POINT}/check/${jobId}/${user._id}`,
                                         { withCredentials: true }
                                     );
-                                    
+
                                     if (checkRes.data.success && checkRes.data.hasApplied) {
                                         isAlreadyApplied = true;
                                     }
@@ -244,7 +244,7 @@ const JobDescription = () => {
                             }
                         }
                     }
-                    
+
                     console.log("DEBUG - Is User Applied:", isAlreadyApplied);
                     setIsApplied(isAlreadyApplied);
                 }
@@ -257,7 +257,7 @@ const JobDescription = () => {
     }, [jobId, dispatch, user?._id]);
 
     useEffect(() => {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.MODE === 'development') {
             console.log('User and job details:', {
                 userRole: user?.role,
                 userId: user?._id,
@@ -271,7 +271,7 @@ const JobDescription = () => {
     useEffect(() => {
         const fetchApplicants = async () => {
             if (!isRecruiter || !isJobCreator) return;
-            
+
             setIsLoadingApplicants(true);
             try {
                 const res = await axios.get(`${APPLICATION_API_END_POINT}/${jobId}/applicants`, { withCredentials: true });
@@ -293,12 +293,12 @@ const JobDescription = () => {
     }, [jobId, isRecruiter, isJobCreator, singleJob?._id]);
 
     const renderApplicantsList = () => {
-        if (process.env.NODE_ENV === 'development') {
+        if (import.meta.env.MODE === 'development') {
             console.log('Rendering applicants list:', { isRecruiter, isJobCreator, user });
         }
-        
+
         if (!isRecruiter || !isJobCreator) {
-            if (process.env.NODE_ENV === 'development') {
+            if (import.meta.env.MODE === 'development') {
                 console.log('Not showing applicants list because:', { isRecruiter, isJobCreator });
             }
             return null;
@@ -351,11 +351,10 @@ const JobDescription = () => {
                                             <p className="text-sm text-gray-600">{applicant.email || 'N/A'}</p>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <Badge className={`flex items-center gap-1 ${
-                                                application.similarity >= 0.7 ? 'bg-green-100 text-green-700' :
-                                                application.similarity >= 0.5 ? 'bg-yellow-100 text-yellow-700' :
-                                                'bg-red-100 text-red-700'
-                                            }`}>
+                                            <Badge className={`flex items-center gap-1 ${application.similarity >= 0.7 ? 'bg-green-100 text-green-700' :
+                                                    application.similarity >= 0.5 ? 'bg-yellow-100 text-yellow-700' :
+                                                        'bg-red-100 text-red-700'
+                                                }`}>
                                                 <Percent className="w-3 h-3" />
                                                 {formatMatchScore(application.similarity)} Match
                                             </Badge>
@@ -391,30 +390,30 @@ const JobDescription = () => {
     const AISuggestionsSection = ({ job }) => {
         // Check if the current user is the job creator or recruiter
         const canSeeAllSuggestions = isRecruiter && isJobCreator;
-        
+
         // Determine which suggestions to show based on user role
-        const improvements = canSeeAllSuggestions 
-            ? (job?.aiImprovements || []) 
+        const improvements = canSeeAllSuggestions
+            ? (job?.aiImprovements || [])
             : (job?.showAiSuggestionsToApplicants ? (job?.approvedAiImprovements || []) : []);
-        
-        const additionalSkills = canSeeAllSuggestions 
-            ? (job?.aiAdditionalSkills || []) 
+
+        const additionalSkills = canSeeAllSuggestions
+            ? (job?.aiAdditionalSkills || [])
             : (job?.showAiSuggestionsToApplicants ? (job?.approvedAiAdditionalSkills || []) : []);
-        
-        const structuredRequirements = canSeeAllSuggestions 
-            ? (job?.aiStructuredRequirements || []) 
+
+        const structuredRequirements = canSeeAllSuggestions
+            ? (job?.aiStructuredRequirements || [])
             : (job?.showAiSuggestionsToApplicants ? (job?.approvedAiStructuredRequirements || []) : []);
-        
-        const hasAISuggestions = 
+
+        const hasAISuggestions =
             improvements.length > 0 ||
             additionalSkills.length > 0 ||
             structuredRequirements.length > 0;
-        
+
         // Don't display the section at all for non-recruiters if no suggestions or showAiSuggestions is false
         if (!canSeeAllSuggestions && (!job?.showAiSuggestionsToApplicants || !hasAISuggestions)) {
             return null;
         }
-        
+
         return (
             <div className="mt-8 bg-white rounded-xl shadow-sm border border-gray-100">
                 <div className="p-6 border-b border-gray-100">
@@ -436,7 +435,7 @@ const JobDescription = () => {
                             <p className="text-gray-500">No AI insights available for this job posting.</p>
                         </div>
                     )}
-                    
+
                     {improvements.length > 0 && (
                         <div>
                             <h3 className="font-semibold text-lg mb-2">
@@ -449,7 +448,7 @@ const JobDescription = () => {
                             </ul>
                         </div>
                     )}
-                    
+
                     {additionalSkills.length > 0 && (
                         <div>
                             <h3 className="font-semibold text-lg mb-2">
@@ -462,7 +461,7 @@ const JobDescription = () => {
                             </ul>
                         </div>
                     )}
-                    
+
                     {structuredRequirements.length > 0 && (
                         <div>
                             <h3 className="font-semibold text-lg mb-2">
@@ -514,9 +513,9 @@ const JobDescription = () => {
                 <div className='flex-1'>
                     <div className="flex items-start gap-4 mb-4">
                         {singleJob?.company?.logo && (
-                            <img 
-                                src={singleJob.company.logo} 
-                                alt={singleJob.company.name} 
+                            <img
+                                src={singleJob.company.logo}
+                                alt={singleJob.company.name}
                                 className="w-16 h-16 rounded-lg object-cover"
                             />
                         )}
@@ -558,11 +557,10 @@ const JobDescription = () => {
                             ₹{singleJob?.salary} LPA
                         </Badge>
                         {!isRecruiter && singleJob?.similarity !== undefined && (
-                            <Badge className={`flex items-center gap-1 ${
-                                singleJob.similarity >= 0.7 ? 'bg-green-100 text-green-700' :
-                                singleJob.similarity >= 0.5 ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
-                            }`}>
+                            <Badge className={`flex items-center gap-1 ${singleJob.similarity >= 0.7 ? 'bg-green-100 text-green-700' :
+                                    singleJob.similarity >= 0.5 ? 'bg-yellow-100 text-yellow-700' :
+                                        'bg-red-100 text-red-700'
+                                }`}>
                                 <Percent className="w-3 h-3" />
                                 {formatMatchScore(singleJob.similarity)} Match
                             </Badge>
@@ -571,8 +569,8 @@ const JobDescription = () => {
                 </div>
                 <div className="mt-4 sm:mt-0 flex gap-2">
                     {isRecruiter && isJobCreator && (
-                        <Button 
-                            onClick={() => setDeleteDialogOpen(true)} 
+                        <Button
+                            onClick={() => setDeleteDialogOpen(true)}
                             variant="destructive"
                             className="flex items-center gap-1"
                         >
@@ -596,7 +594,7 @@ const JobDescription = () => {
                 <div className="p-6">
                     <h2 className="text-xl font-bold text-gray-900 mb-4">Job Description</h2>
                     <p className="text-gray-600 whitespace-pre-wrap">{singleJob?.description}</p>
-                    
+
                     <div className="mt-6 space-y-4">
                         <div>
                             <h3 className="font-semibold text-gray-900">Experience Required</h3>
@@ -616,9 +614,9 @@ const JobDescription = () => {
                                         if (typeof req === 'object' && req !== null) {
                                             return (
                                                 <li key={index}>
-                                                    {req.skill || req.requirement || req.text || 
-                                                    req.name || req.title || req.description || 
-                                                    (req.toString && req.toString() !== '[object Object]' ? req.toString() : 'Requirement')}
+                                                    {req.skill || req.requirement || req.text ||
+                                                        req.name || req.title || req.description ||
+                                                        (req.toString && req.toString() !== '[object Object]' ? req.toString() : 'Requirement')}
                                                 </li>
                                             );
                                         }
@@ -648,15 +646,15 @@ const JobDescription = () => {
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             onClick={() => setDeleteDialogOpen(false)}
                             disabled={isDeleting}
                         >
                             Cancel
                         </Button>
-                        <Button 
-                            variant="destructive" 
+                        <Button
+                            variant="destructive"
                             onClick={deleteJobHandler}
                             disabled={isDeleting}
                             className="flex items-center gap-1"
@@ -686,14 +684,14 @@ const JobDescription = () => {
                             Please answer the following questions to complete your application for {singleJob?.title}.
                         </DialogDescription>
                     </DialogHeader>
-                    
+
                     <div className="space-y-4 my-4">
                         {screeningResponses.map((response, index) => (
                             <div key={index} className="space-y-2">
                                 <Label htmlFor={`question-${index}`} className="font-medium">
                                     {response.question}
                                 </Label>
-                                
+
                                 {response.type === 'text' && (
                                     <Textarea
                                         id={`question-${index}`}
@@ -703,9 +701,9 @@ const JobDescription = () => {
                                         className="min-h-[80px]"
                                     />
                                 )}
-                                
+
                                 {response.type === 'multiple_choice' && (
-                                    <Select 
+                                    <Select
                                         value={response.answer}
                                         onValueChange={(value) => handleScreeningAnswerChange(index, value)}
                                     >
@@ -719,9 +717,9 @@ const JobDescription = () => {
                                         </SelectContent>
                                     </Select>
                                 )}
-                                
+
                                 {response.type === 'boolean' && (
-                                    <Select 
+                                    <Select
                                         value={response.answer}
                                         onValueChange={(value) => handleScreeningAnswerChange(index, value)}
                                     >
@@ -737,15 +735,15 @@ const JobDescription = () => {
                             </div>
                         ))}
                     </div>
-                    
+
                     <DialogFooter>
-                        <Button 
-                            variant="outline" 
+                        <Button
+                            variant="outline"
                             onClick={() => setScreeningDialogOpen(false)}
                         >
                             Cancel
                         </Button>
-                        <Button 
+                        <Button
                             onClick={() => submitApplication(true)}
                             disabled={isSubmittingApplication || screeningResponses.some(r => !r.answer)}
                             className={isSubmittingApplication ? 'bg-gray-600' : 'bg-purple-600 hover:bg-purple-700'}

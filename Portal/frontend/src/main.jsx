@@ -2,6 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import './index.css'
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import './components/ui/theme.css'
 import { Toaster } from './components/ui/sonner.jsx'
 import { Provider } from 'react-redux'
@@ -16,10 +17,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <ThemeProvider>
-          <App />
-          <Toaster />
-        </ThemeProvider>
+        <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+          <ThemeProvider>
+            <App />
+            <Toaster />
+          </ThemeProvider>
+        </GoogleOAuthProvider>
       </PersistGate>
     </Provider>
   </React.StrictMode>,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Navbar from './shared/Navbar';
-import { Avatar, AvatarImage } from './ui/avatar';
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { Button } from './ui/button';
 import { Contact, Mail, Pen, MapPin, Briefcase } from 'lucide-react';
 import { Badge } from './ui/badge';
@@ -18,9 +18,13 @@ const Profile = () => {
 
     const getResumeUrl = (resumePath) => {
         if (!resumePath) return null;
-        // Convert Windows path to URL format and ensure it points to the correct API endpoint
-        const formattedPath = resumePath.replace(/\\/g, '/').replace('uploads/', '');
-        return `${BASE_API_URL}/uploads/${formattedPath}`;
+        // Convert Windows path to URL format
+        const formattedPath = resumePath.replace(/\\/g, '/');
+        // If path starts with 'uploads/', keep it; otherwise add it
+        const cleanPath = formattedPath.startsWith('uploads/')
+            ? formattedPath.replace('uploads/', '')
+            : formattedPath;
+        return `http://localhost:8001/api/v1/uploads/${cleanPath}`;
     };
 
     return (
@@ -30,7 +34,9 @@ const Profile = () => {
                 <div className='flex justify-between'>
                     <div className='flex items-center gap-4'>
                         <Avatar className="h-24 w-24">
-                            <AvatarImage src={user?.profile?.profilePhoto || "https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg"} alt="profile" />
+                            {/* <AvatarImage src ="https://github.com/shadcn.png" alt="@shadcn" /> */}
+                            <AvatarImage src={user?.profile?.profilePhoto?.url || user?.profile?.profilePhoto || "https://www.shutterstock.com/image-vector/circle-line-simple-design-logo-600nw-2174926871.jpg"} alt="profile" />
+                            <AvatarFallback>{user?.fullname?.charAt(0).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
                             <h1 className='font-medium text-xl'>{user?.fullname}</h1>
@@ -58,7 +64,7 @@ const Profile = () => {
                 {/* Resume Information */}
                 <div className='my-5 p-4 bg-gray-50 rounded-lg'>
                     <h2 className='font-semibold text-lg mb-3'>Resume Information</h2>
-                    
+
                     {/* Extracted Job Title */}
                     {user?.profile?.parsedResume?.jobTitle && (
                         <div className='flex items-center gap-3 my-2'>
@@ -66,7 +72,7 @@ const Profile = () => {
                             <span>Preferred Role: {user.profile.parsedResume.jobTitle}</span>
                         </div>
                     )}
-                    
+
                     {/* Extracted Location */}
                     {user?.profile?.parsedResume?.location && (
                         <div className='flex items-center gap-3 my-2'>
@@ -80,23 +86,23 @@ const Profile = () => {
                         <Label className="text-md font-semibold">Resume File</Label>
                         <div className='mt-2'>
                             {user?.profile?.resume ? (
-                                <a 
+                                <a
                                     href={getResumeUrl(user.profile.resume.path)}
-                                    target="_blank" 
+                                    target="_blank"
                                     rel="noopener noreferrer"
                                     className='text-blue-500 hover:underline cursor-pointer flex items-center gap-2 group'
                                 >
-                                    <svg 
-                                        className="w-5 h-5 text-blue-500 group-hover:text-blue-600" 
-                                        fill="none" 
-                                        stroke="currentColor" 
+                                    <svg
+                                        className="w-5 h-5 text-blue-500 group-hover:text-blue-600"
+                                        fill="none"
+                                        stroke="currentColor"
                                         viewBox="0 0 24 24"
                                     >
-                                        <path 
-                                            strokeLinecap="round" 
-                                            strokeLinejoin="round" 
-                                            strokeWidth={2} 
-                                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" 
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
                                         />
                                     </svg>
                                     <span>{user.profile.resume.originalName}</span>

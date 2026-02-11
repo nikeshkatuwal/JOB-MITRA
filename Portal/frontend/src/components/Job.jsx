@@ -16,6 +16,7 @@ const Job = ({ job }) => {
     }
 
     const truncateDescription = (description, charLimit) => {
+        if (!description) return "";
         if (description.length > charLimit) {
             return description.slice(0, charLimit) + '...';
         }
@@ -42,7 +43,7 @@ const Job = ({ job }) => {
                     </Button>
                     <div>
                         <h1 className='font-medium text-base sm:text-lg lg:text-xl'>{job?.company?.name}</h1>
-                        <p className='text-xs sm:text-sm lg:text-base text-gray-500'>India</p>
+                        <p className='text-xs sm:text-sm lg:text-base text-gray-500'>Nepal</p>
                     </div>
                 </div>
 
@@ -69,7 +70,7 @@ const Job = ({ job }) => {
                     <Button onClick={() => navigate(`/description/${job?._id}`)} variant="outline" className='w-full sm:w-auto'>
                         Details
                     </Button>
-                    
+
                 </div>
             </div>
         </div>

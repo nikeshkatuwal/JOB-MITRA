@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setSearchedQuery } from '@/redux/jobSlice';
 import { useNavigate } from 'react-router-dom';
 import Typewriter from 'typewriter-effect';
+import heroImage from '../assets/herologo.png';
 
 const HeroSection = () => {
     const [query, setQuery] = useState("");
@@ -85,16 +86,15 @@ const HeroSection = () => {
                                     value={query}
                                     onChange={(e) => setQuery(e.target.value)}
                                     onKeyPress={(e) => e.key === 'Enter' && searchJobHandler()}
-                                    className={`w-full px-6 py-4 rounded-l-full border-2 ${
-                                        darkMode 
-                                            ? 'border-gray-700 bg-gray-800 text-gray-100' 
+                                    className={`w-full px-6 py-3.5 rounded-l-full border-2 ${darkMode
+                                            ? 'border-gray-700 bg-gray-800 text-gray-100'
                                             : 'border-purple-200 text-gray-900'
-                                    } border-r-0 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition duration-200`}
+                                        } border-r-0 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition duration-200`}
                                 />
                             </div>
                             <Button
                                 onClick={searchJobHandler}
-                                className="px-8 rounded-r-full bg-purple-600 hover:bg-purple-700 transition duration-200"
+                                className="px-8 py-7 rounded-r-full bg-purple-600 hover:bg-purple-700 transition duration-200"
                             >
                                 <Search className="w-5 h-5" />
                             </Button>
@@ -105,11 +105,10 @@ const HeroSection = () => {
                             {features.map((feature, index) => (
                                 <div
                                     key={index}
-                                    className={`flex flex-col items-center sm:items-start p-4 rounded-lg ${
-                                        darkMode 
-                                            ? 'bg-gray-800 text-gray-100' 
+                                    className={`flex flex-col items-center sm:items-start p-4 rounded-lg ${darkMode
+                                            ? 'bg-gray-800 text-gray-100'
                                             : 'bg-white text-gray-900'
-                                    } shadow-sm hover:shadow-md transition duration-200 space-y-2`}
+                                        } shadow-sm hover:shadow-md transition duration-200 space-y-2`}
                                 >
                                     {feature.icon}
                                     <h3 className="font-semibold">{feature.title}</h3>
@@ -123,9 +122,9 @@ const HeroSection = () => {
                     <div className="relative order-first lg:order-last">
                         <div className="relative z-10">
                             <img
-                                src="https://res.cloudinary.com/ddcg0rzlo/image/upload/v1651252781/Hero_mcnozf.png"
+                                src={heroImage}
                                 alt="Job Search"
-                                className="w-full h-auto max-w-lg mx-auto"
+                                className="w-full h-auto max-w-lg mx-auto rounded-2xl shadow-2xl"
                                 style={darkMode ? { filter: 'brightness(0.9) contrast(1.1)' } : {}}
                             />
                         </div>

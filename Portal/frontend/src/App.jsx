@@ -2,10 +2,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Navbar from './components/shared/Navbar'
 import Login from './components/auth/Login'
 import Signup from './components/auth/Signup'
+import ForgotPassword from './components/auth/ForgotPassword'
+import ResetPassword from './components/auth/ResetPassword'
 import Home from './components/Home'
 import Jobs from './components/Jobs'
 import Browse from './components/Browse'
 import Profile from './components/Profile'
+import RecruiterProfile from './components/RecruiterProfile'
 import JobDescription from './components/JobDescription'
 import Companies from './components/admin/Companies'
 import CompanyCreate from './components/admin/CompanyCreate'
@@ -20,11 +23,11 @@ import { useEffect } from 'react'
 // Protected Route component
 const ProtectedRecruiterRoute = ({ children }) => {
   const { user } = useSelector((state) => state.auth);
-  
+
   if (!user || user.role !== 'recruiter') {
     return <Navigate to="/login" />;
   }
-  
+
   return children;
 };
 
@@ -36,8 +39,8 @@ const App = () => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
       document.body.classList.add('dark');
-      document.body.style.backgroundColor = '#0f172a';
-      document.body.style.color = '#e2e8f0';
+      document.body.style.backgroundColor = '#1c2844';
+      document.body.style.color = '#b9c6d8';
     } else {
       document.documentElement.classList.remove('dark');
       document.body.classList.remove('dark');
@@ -53,11 +56,18 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/password/reset/:token" element={<ResetPassword />} />
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/browse" element={<Browse />} />
           <Route path="/description/:id" element={<JobDescription />} />
           <Route path="/profile" element={<Profile />} />
-          
+          <Route path="/recruiter/profile" element={
+            <ProtectedRecruiterRoute>
+              <RecruiterProfile />
+            </ProtectedRecruiterRoute>
+          } />
+
           {/* Protected Admin Routes */}
           <Route path="/admin/companies" element={
             <ProtectedRecruiterRoute>

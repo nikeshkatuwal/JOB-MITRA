@@ -34,7 +34,7 @@ const DarkModeToggle = () => {
       }
       
       // Add dark class to ensure our CSS rules apply
-      el.classList.add('dark');
+      el.classList.add('dark-mode');
     });
     
     // Specifically target elements in Home, Profile, Jobs, and Browse pages

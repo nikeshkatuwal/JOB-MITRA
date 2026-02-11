@@ -1,7 +1,7 @@
 import mixpanel from 'mixpanel-browser';
 
 export const initAnalytics = () => {
-  mixpanel.init(process.env.MIXPANEL_TOKEN);
+  mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN);
 };
 
 export const trackEvent = (eventName, properties) => {

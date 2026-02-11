@@ -20,7 +20,7 @@ import { toast } from 'sonner';
 
 // List of predefined skills matching the backend
 const PREDEFINED_SKILLS = [
-    "JavaScript", "Python", "Java", "C++", "SQL", "ExpressJS", 
+    "JavaScript", "Python", "Java", "C++", "SQL", "ExpressJS",
     "React", "Node.js", "MongoDB", "HTML", "CSS",
     "Machine Learning", "AI", "Data Science", "Cloud Computing",
     "AWS", "Azure", "DevOps", "Docker", "Kubernetes",
@@ -42,7 +42,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
         phoneNumber: '',
         bio: '',
         skills: [],
-        file: null
+        file: null,
+        profilePhoto: null
     });
     const [skillInput, setSkillInput] = useState('');
     const [suggestedSkills, setSuggestedSkills] = useState([]);
@@ -55,7 +56,8 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 phoneNumber: user.phoneNumber || '',
                 bio: user.profile?.bio || '',
                 skills: user.profile?.skills || [],
-                file: null
+                file: null,
+                profilePhoto: null
             });
         }
     }, [user]);
@@ -63,7 +65,7 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
     useEffect(() => {
         // Update suggestions based on input
         if (skillInput.trim()) {
-            const filtered = PREDEFINED_SKILLS.filter(skill => 
+            const filtered = PREDEFINED_SKILLS.filter(skill =>
                 skill.toLowerCase().includes(skillInput.toLowerCase()) &&
                 !formData.skills.includes(skill)
             );
@@ -97,6 +99,25 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                 file
             }));
             toast.success('Resume selected successfully');
+        }
+    };
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (!file.type.startsWith('image/')) {
+                toast.error('Please upload an image file');
+                return;
+            }
+            if (file.size > 2 * 1024 * 1024) { // 2MB
+                toast.error('Profile photo should be less than 2MB');
+                return;
+            }
+            setFormData(prev => ({
+                ...prev,
+                profilePhoto: file
+            }));
+            toast.success('Profile photo selected successfully');
         }
     };
 
@@ -134,6 +155,9 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
             submitData.append('skills', formData.skills.join(','));
             if (formData.file) {
                 submitData.append('file', formData.file);
+            }
+            if (formData.profilePhoto) {
+                submitData.append('profilePhoto', formData.profilePhoto);
             }
 
             console.log('Submitting form data:', {
@@ -254,6 +278,22 @@ const UpdateProfileDialog = ({ open, setOpen }) => {
                                 </Badge>
                             ))}
                         </div>
+                    </div>
+
+                    {/* Profile Photo Upload */}
+                    <div>
+                        <Label htmlFor="profilePhoto">Profile Photo</Label>
+                        <Input
+                            id="profilePhoto"
+                            name="profilePhoto"
+                            type="file"
+                            accept="image/*"
+                            onChange={handlePhotoChange}
+                            className="cursor-pointer"
+                        />
+                        <p className="text-sm text-gray-500 mt-1">
+                            Maximum file size: 2MB (Image files only)
+                        </p>
                     </div>
 
                     {/* Resume Upload */}

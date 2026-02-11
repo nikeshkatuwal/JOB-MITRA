@@ -10,7 +10,7 @@ import { USER_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading } from "@/redux/authSlice";
-import { Loader2 } from "lucide-react";
+import { Loader2, Eye, EyeOff } from "lucide-react";
 import animation from "../../assets/Animation - 1729694127288.json";
 import Lottie from "lottie-react";
 import Logo from '../ui/Logo';
@@ -24,6 +24,7 @@ const Signup = () => {
     role: "",
     file: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
   const { loading, user } = useSelector((store) => store.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -123,14 +124,23 @@ const Signup = () => {
             </div>
             <div className="my-2">
               <Label>Password</Label>
-              <Input
-                type="password"
-                value={input.password}
-                name="password"
-                onChange={changeEventHandler}
-                placeholder="Enter your password"
-                className="mt-1 w-full"
-              />
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={input.password}
+                  name="password"
+                  onChange={changeEventHandler}
+                  placeholder="Enter your password"
+                  className="mt-1 w-full pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                >
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                </button>
+              </div>
             </div>
             <div className="flex flex-col sm:flex-row items-center justify-between my-4 space-y-2 sm:space-y-0 sm:space-x-4">
               <RadioGroup className="flex items-center gap-4">

@@ -7,51 +7,58 @@ import FilterCard from './FilterCard'
 
 const Jobs = () => {
     const { allJobs, searchedQuery } = useSelector(store => store.job);
-    const [filterJobs, setFilterJobs] = useState(allJobs);
+    const [filterJobs, setFilterJobs] = useState([]);
 
     useEffect(() => {
         if (searchedQuery) {
-            const filteredJobs = allJobs.filter((job) => {
+            const filteredJobs = (allJobs || []).filter((job) => {
+                const query = searchedQuery.toLowerCase();
+                const salary = parseInt(job?.salary) || 0;
+
                 // Check if the query contains a salary range pattern like "0-3" or "15+"
                 const salaryRangeMatch = searchedQuery.match(/(\d+)-(\d+)|\d+\+/);
-                
+
                 if (salaryRangeMatch) {
                     // Extract salary range values
                     const range = salaryRangeMatch[0];
-                    const jobSalary = parseInt(job.salary);
-                    
+
                     if (range.includes('-')) {
                         // Handle range like "0-3", "3-6", etc.
                         const [min, max] = range.split('-').map(Number);
-                        if (!(jobSalary >= min && jobSalary <= max)) {
+                        if (!(salary >= min && salary <= max)) {
                             return false;
                         }
                     } else if (range.includes('+')) {
                         // Handle range like "15+"
                         const min = parseInt(range);
-                        if (!(jobSalary >= min)) {
+                        if (!(salary >= min)) {
                             return false;
                         }
                     }
-                    
+
                     // If we're filtering by salary, also check other fields
                     const otherTerms = searchedQuery.replace(range, '').trim();
                     if (otherTerms) {
-                        return job.title.toLowerCase().includes(otherTerms.toLowerCase()) ||
-                            job.description.toLowerCase().includes(otherTerms.toLowerCase()) ||
-                            job.location.toLowerCase().includes(otherTerms.toLowerCase());
+                        const otherTermsLower = otherTerms.toLowerCase();
+                        return (job?.title?.toLowerCase() || "").includes(otherTermsLower) ||
+                            (job?.description?.toLowerCase() || "").includes(otherTermsLower) ||
+                            (job?.location?.toLowerCase() || "").includes(otherTermsLower);
                     }
                     return true;
                 }
-                
+
                 // Default search behavior if no salary range is detected
-                return job.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job.location.toLowerCase().includes(searchedQuery.toLowerCase());
+                return (job?.title?.toLowerCase() || "").includes(query) ||
+                    (job?.description?.toLowerCase() || "").includes(query) ||
+                    (job?.location?.toLowerCase() || "").includes(query) ||
+                    (job?.company?.name?.toLowerCase() || "").includes(query) ||
+                    (job?.requirements && Array.isArray(job.requirements) && job.requirements.some(req =>
+                        (typeof req === 'string' ? req.toLowerCase() : "").includes(query)
+                    ));
             });
             setFilterJobs(filteredJobs);
         } else {
-            setFilterJobs(allJobs);
+            setFilterJobs(allJobs || []);
         }
     }, [allJobs, searchedQuery]);
 
@@ -60,7 +67,7 @@ const Jobs = () => {
             <Navbar />
             <div className='mx-auto mt-5 px-4'>
                 <div className='flex flex-col lg:flex-row gap-5'>
-                <div className=''>
+                    <div className=''>
                         <FilterCard />
                     </div>
                     {

@@ -24,7 +24,7 @@ const Logo = ({ size = 'default', linkTo = '/' }) => {
         <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
       </div>
       <span className={`font-bold ${logoClass} bg-clip-text ${darkMode ? 'text-transparent bg-gradient-to-r from-purple-400 to-blue-400' : 'text-transparent bg-gradient-to-r from-purple-600 to-blue-600'}`}>
-        Smart<span className="font-extrabold">Hire</span>
+        Job<span className="font-extrabold">Mitra</span>
       </span>
     </Link>
   );

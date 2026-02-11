@@ -1,45 +1,57 @@
 # Dependencies
-node_modules/
+# node_modules
+# README.md
+# package-lock.json
+# package.json
+# RENDER_DEPLOYMENT_GUIDE.md
+# COMPREHENSIVE_DEPLOYMENT_GUIDE.md
+# DEPLOYMENT_GUIDE.md
+# desktop.ini
+# uploads
+# test
+# .gitignore
+# Procfile
+# okay
 
 # Environment variables
 .env
-.env.local
-.env.*.local
+# .env.local
+# .env.*.local
 
 # Build output
-dist/
-build/
+# dist/
+# build/
 
 # IDE files
-.vscode/
-.idea/
-.cursor/
+# .vscode/
+# .idea/
+# .cursor/
 
 # Logs
-logs/
-*.log
-npm-debug.log*
+# logs/
+# *.log
+# npm-debug.log*
 
 # System files
-.DS_Store
-Thumbs.db
+# .DS_Store
+# Thumbs.db
 
 # Uploaded files
-uploads/
-Resumes/
+# uploads/
+# Resumes/
 
 # Test coverage
-coverage/
+# coverage/
 
 # Local database
-*.sqlite
-.qodo/
+# *.sqlite
+# .qodo/
 
 # Cache
-.cache/
-.npm/
+# .cache/
+# .npm/
 
 # Build artifacts
-*.tar.gz
-*.zip
+# *.tar.gz
+# *.zip
 

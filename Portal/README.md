@@ -1,11 +1,11 @@
 # AI-Job Portal Application
-this file is changed.
 
 ## Deployment Guide
 
 This guide will help you deploy the AI-Job Portal application to a production environment.
 
 ### Prerequisites
+okay
 
 - Node.js (v14 or higher)
 - MongoDB (local or cloud instance)
